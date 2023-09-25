@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+typedef int item;
+// struct item
+// {
+//     int v;// val1 is acutal value of node val2 is count.
+// };
+struct segtree
+{
+    int size;
+    vector<item> t;
+    void init(int n)
+    {
+        size == 1;
+        while (size < n)
+            size *= 2;
+        t.assign(2 * size, 0LL);
+    }
+    item neutral = 0; // check here
+    item single(int v)
+    {
+        return v;
+    }
+    item merge(item a, item b)
+    { // check this func, this is for min and its count on segment.
+        return a + b;
+    }
+    void build(vector<int>a,int x,int lx,int rx)
+    {
+        if(rx-lx==1)
+        {
+            if(lx<a.size())
+            {
+                t[x]=single(a[lx]);
+            }
+        }
+        int m=(lx+rx)/2;
+        build(a,2*x+1,lx,m);
+        build(a,2*x+2,m,rx);
+        t[x]=merge(t[2*x+1],t[2*x+2]);
+    }
+    void build(vector<int>a)
+    {
+        build(a,0,0,size);
+    }
+    void set(int i, int v, int x, int lx, int rx)
+    {
+        if (rx - lx == 1)
+        {
+            t[x] = v;
+            return;
+        }
+        int m = (lx + rx) / 2;
+        if (i < m)
+        {
+            set(i, v, 2 * x + 1, lx, m);
+        }
+        else
+        {
+            set(i, v, 2 * x + 2, m, rx);
+        }
+        t[i]=merge(t[2*x+1],t[2*x+2]);
+    }
+    void set(int i,int v)
+    {
+        set(i,v,0,0,size);
+    }
+    ll query(int l,int r,int x,int lx,int rx)
+    {
+        if(lx>=r||l>=rx)return neutral;
+        if(lx>=l&&rx<=r)return t[x];
+        int m=(lx+rx)/2;
+        ll s1=query(l,r,2*x+1,lx,m);
+        ll s2=query(l,r,2*x+2,m,rx);
+        return merge(s1,s2);
+    }
+    ll query(int l,int r)
+    {
+        return query(l,r,0,0,size);
+    }
+};
+int main()
+{
+    return 0;
+}
